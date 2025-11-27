@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy 
 from sqlalchemy import String, Boolean, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column 
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import List
 
 db = SQLAlchemy()
 
@@ -9,6 +10,7 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(320), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+    favorites: Mapped[List["Favorites"]] = relationship(back_populates='user')
 
     def serialize(self):
         return {
@@ -26,6 +28,7 @@ class People(db.Model):
     height: Mapped[str] = mapped_column(String(120), nullable=False)
     mass: Mapped[str] = mapped_column(String(60), nullable=False)
     skin_color: Mapped[str] = mapped_column(String(40), nullable=False)
+    favorites: Mapped[List["Favorites"]] = relationship(back_populates='people')
 
 
     def serialize(self):
@@ -51,6 +54,7 @@ class Planet(db.Model):
     orbital_period: Mapped[str] = mapped_column(String(120), nullable=False)
     rotation_period: Mapped[int] = mapped_column(String(120), nullable=False)
     terrain: Mapped[int] = mapped_column(String(120), nullable=False)
+    favorites: Mapped[List["Favorites"]] = relationship(back_populates='planet')
 
 
     def serialize(self):
@@ -66,7 +70,7 @@ class Planet(db.Model):
 
         }
 
-class Favorite(db.Model):
+class Favorites(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     id_user: Mapped[int] = mapped_column(ForeignKey("user.id"),primary_key=True)
     id_people: Mapped[int] = mapped_column(ForeignKey("people.id"),primary_key=True)
